@@ -19,14 +19,14 @@ public class EstadioModel implements Serializable {
     @NotBlank
     @NotNull
     @Length(min = 3, max = 50)
-    private String EstadioNome;
+    private String estadioNome;
 
     public String getEstadioNome() {
-        return EstadioNome;
+        return estadioNome;
     }
 
     public void setEstadioNome(String estadioNome) {
-        EstadioNome = estadioNome;
+        estadioNome = estadioNome;
     }
 
     public Long getId() {

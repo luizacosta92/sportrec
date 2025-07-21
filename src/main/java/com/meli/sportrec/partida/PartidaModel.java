@@ -24,8 +24,7 @@ public class PartidaModel implements Serializable {
     @NotBlank
     private String estadio;
 
-    @NotBlank
-    private LocalDateTime dataDaPartida;
+    private LocalDateTime dataPartida;
 
     @NotBlank
     private String resultadoPartida;
@@ -62,12 +61,12 @@ public class PartidaModel implements Serializable {
         this.estadio = estadio;
     }
 
-    public LocalDateTime getDataDaPartida() {
-        return dataDaPartida;
+    public LocalDateTime getDataPartida() {
+        return dataPartida;
     }
 
-    public void setDataDaPartida(LocalDateTime dataDaPartida) {
-        this.dataDaPartida = dataDaPartida;
+    public void setDataPartida(LocalDateTime dataPartida) {
+        this.dataPartida = dataPartida;
     }
 
     public String getResultadoPartida() {

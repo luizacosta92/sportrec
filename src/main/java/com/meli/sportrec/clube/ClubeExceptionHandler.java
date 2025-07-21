@@ -1,6 +1,5 @@
-package com.meli.sportrec.clube.exceptions;
+package com.meli.sportrec.clube;
 
-import com.meli.sportrec.clube.ClubeController;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

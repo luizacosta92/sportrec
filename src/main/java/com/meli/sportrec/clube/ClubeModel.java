@@ -31,6 +31,7 @@ public class ClubeModel implements Serializable {
     private Boolean ativo = Boolean.TRUE;
 
 
+
     public Long getId() {
         return id;
     }
