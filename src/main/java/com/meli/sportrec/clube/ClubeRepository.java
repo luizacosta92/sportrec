@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Repository
 public interface ClubeRepository extends JpaRepository<ClubeModel, Long> {
@@ -27,7 +27,11 @@ public interface ClubeRepository extends JpaRepository<ClubeModel, Long> {
     boolean existsByClubeNomeIgnoreCaseAndEstadoAndIdNot(String clubeNome, String estado, Long id);
 
 
-    @Query("SELECT MIN(partida.dataPartida) FROM PartidaModel partida WHERE " +
-            "LOWER(partida.clubeMandante) = LOWER(:clubeNome) OR LOWER(partida.clubeVisitante) = LOWER(:clubeNome)")
-    LocalDateTime dataPrimeiraPartida(@Param("clubeNome") String clubeNome);
+    @Query ("SELECT clube.ativo FROM ClubeModel clube WHERE clube.id = :id")
+    Boolean findClubeAtivoById(@Param("id") Long id);
+
+    @Query("SELECT clube.dataCriacao FROM ClubeModel  clube WHERE clube.id = :id")
+    LocalDate findClubeDataCriacaById(@Param("id") Long id);
+
+
 }

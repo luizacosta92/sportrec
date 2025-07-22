@@ -1,39 +1,25 @@
 package com.meli.sportrec.clube;
 
 
-import com.meli.sportrec.exceptionhandler.EntityConflictException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
+import com.meli.sportrec.partida.PartidaModel;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 
 @Component
 public class ClubeValidator {
-    @Autowired
-    ClubeRepository clubeRepository;
 
-    private void validarDataCriacaoContraPartidas(String clubeNome, LocalDate novaDataCriacao) {
-        try {
-            LocalDateTime primeiraPartidaDateTime = clubeRepository.dataPrimeiraPartida(clubeNome);
+    public void validate(ClubeModel clubeModel,  PartidaModel partidaModel) {
+        validarDataCriacaoClubeMenorQuePrimeiraPartida(clubeModel, partidaModel);
+    }
 
-            if (primeiraPartidaDateTime != null) {
+    private void validarDataCriacaoClubeMenorQuePrimeiraPartida(ClubeModel clubeModel, PartidaModel partidaModel) {
 
-                LocalDate primeiraPartidaDate = primeiraPartidaDateTime.toLocalDate();
-
-                if (novaDataCriacao.isAfter(primeiraPartidaDate)) {
-                    throw new EntityConflictException("A data de criação não pode ser posterior à primeira partida");
-                }
-            }
-        } catch (EntityConflictException e) {
-            throw e;
-        } catch (DataAccessException e) {
-            throw new EntityConflictException("Erro ao validar data de criação");
+        if(clubeModel.getDataCriacao().isAfter(ChronoLocalDate.from(partidaModel.getDataHoraPartida()))) {
         }
-    }
-    public void validarDataCriacao(String clubeNome, LocalDate novaDataCriacao) {
-        validarDataCriacaoContraPartidas(clubeNome, novaDataCriacao);
-    }
+        }
+
+
+
 }
 

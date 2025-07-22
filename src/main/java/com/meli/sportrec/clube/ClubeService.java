@@ -1,6 +1,8 @@
 package com.meli.sportrec.clube;
 
 import com.meli.sportrec.exceptionhandler.EntityConflictException;
+import com.meli.sportrec.partida.PartidaModel;
+import com.meli.sportrec.partida.PartidaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
@@ -17,6 +19,9 @@ public class ClubeService {
 
     @Autowired
     ClubeRepository clubeRepository;
+
+    @Autowired
+    PartidaRepository partidaRepository;
 
     @Autowired
     ClubeValidator clubeValidator;
@@ -48,8 +53,8 @@ public class ClubeService {
 
     @Transactional
     public ClubeModel atualizarClube(Long id, ClubeRecordDto clubeRecordDto) {
-        Optional<ClubeModel> clubeO = clubeRepository.findById(id);
-        if (clubeO.isEmpty()) {
+        Optional<ClubeModel> clube = clubeRepository.findById(id);
+        if (clube.isEmpty()) {
             throw new EntityNotFoundException("Clube não encontrado");
         }
         if (clubeRepository.existsByClubeNomeIgnoreCaseAndEstadoAndIdNot(
@@ -59,16 +64,16 @@ public class ClubeService {
         if (clubeRecordDto.dataCriacao().isAfter(LocalDate.now())) {
             throw new EntityConflictException("Data de criação não pode ser no futuro");
         }
-       clubeValidator.validarDataCriacao(clubeRecordDto.clubeNome(), clubeRecordDto.dataCriacao());
+
+        Optional<PartidaModel> partida = partidaRepository.findTopByClubeMandanteOrClubeVisitanteOrderByDataHoraPartidaAsc(clube.get(), clube.get());
+        clubeValidator.validate(clube.get(), partida.get());
 
 
-        var clubeModel = clubeO.get();
+        var clubeModel = clube.get();
         BeanUtils.copyProperties(clubeRecordDto, clubeModel);
         return clubeRepository.save(clubeModel);
 
     }
-
-
 
     @Transactional
     public void inativarClube(Long id) {
@@ -81,4 +86,5 @@ public class ClubeService {
         clubeModel.setAtivo(false);
         clubeRepository.save(clubeModel);
     }
+
 }

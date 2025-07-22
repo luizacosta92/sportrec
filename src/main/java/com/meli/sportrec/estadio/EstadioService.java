@@ -28,9 +28,7 @@ public class EstadioService {
     }
 
     public Page<EstadioModel> buscarTodosEstadios(Pageable pageable) {
-        if (pageable.getPageNumber() < 0) {
-            throw new IllegalArgumentException("Número da página não pode ser negativo");
-        }
+
         return estadioRepository.findAllOrderByNome(pageable);
     }
 
@@ -53,6 +51,8 @@ public class EstadioService {
                 estadioRecordDto.estadioNome(), id)) {
             throw new EntityConflictException("Estádio " + estadioRecordDto.estadioNome() + " já existe");
         }
+
+
 
         var estadioModel = estadioO.get();
         BeanUtils.copyProperties(estadioRecordDto, estadioModel);

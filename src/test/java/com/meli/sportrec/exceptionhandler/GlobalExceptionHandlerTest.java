@@ -76,7 +76,7 @@ class GlobalExceptionHandlerTest {
 
     @Test // tratar erro de exception
     public void testGivenGenericExceptionWhenHandleGeneralExceptionThenReturnInternalServerError() {
-        Exception exception = new RuntimeException("Erro inesperado do sistema");
+        Exception exception = new RuntimeException("Erro inesperado.");
 
         ResponseEntity<ApiError> response = globalExceptionHandler.handleGeneralException(exception);
 

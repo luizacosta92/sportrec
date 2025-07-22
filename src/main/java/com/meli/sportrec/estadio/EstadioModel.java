@@ -1,14 +1,19 @@
 package com.meli.sportrec.estadio;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.meli.sportrec.partida.PartidaModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "TB_Estadios")
+@Table(name = "tb_estadios")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class EstadioModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -19,14 +24,19 @@ public class EstadioModel implements Serializable {
     @NotBlank
     @NotNull
     @Length(min = 3, max = 50)
+    @Column(name = "estadio_nome")
     private String estadioNome;
+
+    @OneToMany(mappedBy = "estadio", fetch = FetchType.LAZY)
+    private List<PartidaModel> partidas = new ArrayList<>();
+
 
     public String getEstadioNome() {
         return estadioNome;
     }
 
     public void setEstadioNome(String estadioNome) {
-        estadioNome = estadioNome;
+        this.estadioNome = estadioNome;
     }
 
     public Long getId() {

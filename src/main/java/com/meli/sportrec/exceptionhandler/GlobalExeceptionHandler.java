@@ -1,6 +1,8 @@
 package com.meli.sportrec.exceptionhandler;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,6 +13,7 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExeceptionHandler {
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExeceptionHandler.class);
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidationException(MethodArgumentNotValidException ex) {
@@ -30,14 +33,15 @@ public class GlobalExeceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneralException(Exception ex) {
+        logger.error(ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiError("internal_server_error", "Erro inesperado.", HttpStatus.INTERNAL_SERVER_ERROR.value()));
+                .body(new ApiError("Erro inesperado.", ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
     }
 
     @ExceptionHandler(EntityConflictException.class)
     public ResponseEntity<ApiError> handleClubeConflict(EntityConflictException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).
-                body(new ApiError("Entidade já existe", ex.getMessage(), HttpStatus.CONFLICT.value()));
+                body(new ApiError("Conflito na criação da entidade", ex.getMessage(), HttpStatus.CONFLICT.value()));
     }
 
 }
