@@ -1,6 +1,7 @@
 package com.meli.sportrec.clube;
 
 import com.meli.sportrec.exceptionhandler.EntityConflictException;
+import com.meli.sportrec.partida.PartidaModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,15 +34,20 @@ public class ClubeValidatorTest {
 
         @Test
         public void testGivenDataCriacaoAfterPrimeiraPartidaWhenValidateDataCriacaoThenThrowException(){
-            String clubeNome = "Clube 1";
-            LocalDate novaDataCriacao = LocalDate.now().plusDays(5);
+            Long idClube = 1L;
 
-           when(clubeRepository.dataPrimeiraPartida(clubeNome)).thenReturn(LocalDateTime.now());
+            ClubeModel clube = new ClubeModel();
+            clube.setId(idClube);
+            clube.setClubeNome("Clube 1");
+            clube.setDataCriacao(LocalDate.now().plusDays(5));
+
+            PartidaModel partida = new PartidaModel();
+            partida.setDataHoraPartida(LocalDateTime.now());
 
 
             EntityConflictException exception = assertThrows(
                     EntityConflictException.class,
-                    () -> clubeValidator.validarDataCriacao(clubeNome, novaDataCriacao));
+                    () -> clubeValidator.validate(clube, partida));
 
             assertThat(exception.getMessage())
                     .isEqualTo("A data de criação não pode ser posterior à primeira partida");
@@ -50,15 +56,20 @@ public class ClubeValidatorTest {
 
         @Test
         public void testGivenDataAcessExceptionWhenValidateDataCriacaoThenThrowException(){
-            String clubeNome = "Clube 1";
-            LocalDate novaDataCriacao = LocalDate.now();
+            Long idClube = 1L;
+            ClubeModel clube = new ClubeModel();
+            clube.setClubeNome("Clube 1");
+            clube.setDataCriacao(LocalDate.now());
 
-            when(clubeRepository.dataPrimeiraPartida(clubeNome))
+            PartidaModel partida = new PartidaModel();
+            partida.setDataHoraPartida(LocalDateTime.now().minusDays(1));
+
+            when(clubeRepository.findClubeDataCriacaById(idClube))
                     .thenThrow(new DataAccessException("Erro de conexão com banco") {});
 
             EntityConflictException exception = assertThrows(
                     EntityConflictException.class,
-                    () -> clubeValidator.validarDataCriacao(clubeNome, novaDataCriacao)
+                    () -> clubeValidator.validate(clube, partida)
             );
 
             assertThat(exception.getMessage())
@@ -68,24 +79,28 @@ public class ClubeValidatorTest {
     @Test // clube não tem partidas registradas
     public void testGivenClubeWithoutPartidasWhenValidateDataCriacaoThenDoNotThrowException() {
 
-        String clubeNome = "Clube 1";
-        LocalDate novaDataCriacao = LocalDate.now();
+        ClubeModel clube = new ClubeModel();
+        clube.setClubeNome("Clube 1");
+        clube.setDataCriacao(LocalDate.now());
 
-        when(clubeRepository.dataPrimeiraPartida(clubeNome)).thenReturn(null);
+        PartidaModel partidaNaoExiste = null;
 
-        assertDoesNotThrow(() -> clubeValidator.validarDataCriacao(clubeNome, novaDataCriacao));
+        assertDoesNotThrow(() -> clubeValidator.validate(clube, partidaNaoExiste));
     }
 
     @Test // data de criação anterior à primeira partida
     public void testGivenDataCriacaoBeforePrimeiraPartidaWhenValidateDataCriacaoThenDoNotThrowException() {
 
-        String clubeNome = "Clube 1";
-        LocalDate novaDataCriacao = LocalDate.now().minusDays(5);
+        ClubeModel clube = new ClubeModel();
+        clube.setClubeNome("Clube 1");
+        clube.setDataCriacao(LocalDate.now().minusDays(5));
 
-        when(clubeRepository.dataPrimeiraPartida(clubeNome))
-                .thenReturn(LocalDateTime.now());
+        PartidaModel partida = new PartidaModel();
+        partida.setId(1L);
+        partida.setDataHoraPartida(LocalDateTime.now());
 
-        assertDoesNotThrow(() -> clubeValidator.validarDataCriacao(clubeNome, novaDataCriacao));
+
+        assertDoesNotThrow(() -> clubeValidator.validate(clube, partida));
     }
         }
 

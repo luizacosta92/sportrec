@@ -56,34 +56,34 @@ public class PartidaValidator {
         }
     }
 
-    public void validarConflitosHorarios(Long clubeMandanteId, Long clubeVisitanteId, LocalDateTime dataHoraPartida, Long excluirPartidaId, Long estadioId) {
-        validarConflitosHorarioClubes(clubeMandanteId, clubeVisitanteId, dataHoraPartida, excluirPartidaId);
-        validarEstadioDisponivel(estadioId, dataHoraPartida, excluirPartidaId);
+    public void validarConflitosHorarios(Long clubeMandanteId, Long clubeVisitanteId, LocalDateTime dataHoraPartida, Long estadioId) {
+        validarConflitosHorarioClubes(clubeMandanteId, clubeVisitanteId, dataHoraPartida);
+        validarEstadioDisponivel(estadioId, dataHoraPartida);
         validarDataNoPassado(dataHoraPartida);
     }
 
     private void validarConflitosHorarioClubes(Long clubeMandanteId, Long clubeVisitanteId,
-                                         LocalDateTime dataHoraPartida, Long partidaIdParaExcluir) {
+                                         LocalDateTime dataHoraPartida) {
         LocalDateTime inicio = dataHoraPartida.minusHours(48);
         LocalDateTime fim = dataHoraPartida.plusHours(48);
 
         List<PartidaModel> conflitosMandante = partidaRepository.findConflitoHorarioClube(
-                clubeMandanteId, inicio, fim, partidaIdParaExcluir);
+                clubeMandanteId, inicio, fim);
 
         if (!conflitosMandante.isEmpty()) {
             throw new EntityConflictException("Clube mandante possui outra partida em menos de 48 horas");
         }
 
         List<PartidaModel> conflitosVisitante = partidaRepository.findConflitoHorarioClube(
-                clubeVisitanteId, inicio, fim, partidaIdParaExcluir);
+                clubeVisitanteId, inicio, fim);
 
         if (!conflitosVisitante.isEmpty()) {
             throw new EntityConflictException("Clube visitante possui outra partida em menos de 48 horas");
         }
     }
 
-    private void validarEstadioDisponivel(Long estadioId, LocalDateTime dataHoraPartida, Long excluirPartidaId) {
-        List<PartidaModel> conflitosEstadio = partidaRepository.findConflitosEstadio(estadioId, dataHoraPartida, excluirPartidaId);
+    private void validarEstadioDisponivel(Long estadioId, LocalDateTime dataHoraPartida) {
+        List<PartidaModel> conflitosEstadio = partidaRepository.findConflitosEstadio(estadioId, dataHoraPartida);
 
         if (!conflitosEstadio.isEmpty()) {
             PartidaModel partidaModel = conflitosEstadio.get(0);

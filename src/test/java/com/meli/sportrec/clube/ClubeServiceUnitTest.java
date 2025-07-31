@@ -1,6 +1,8 @@
 package com.meli.sportrec.clube;
 
 import com.meli.sportrec.exceptionhandler.EntityConflictException;
+import com.meli.sportrec.partida.PartidaModel;
+import com.meli.sportrec.partida.PartidaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +36,8 @@ public class ClubeServiceUnitTest {
     private ClubeRepository clubeRepository;
     @Mock
     private ClubeValidator clubeValidator;
+    @Mock
+    private PartidaRepository partidaRepository;
 
     @InjectMocks
     private ClubeService clubeService;
@@ -212,15 +217,19 @@ public class ClubeServiceUnitTest {
     public void testGivenValidClubeWhenClubesIsUpdatedThenSaved() {
         Long clubeId = 1L;
         ClubeRecordDto clubeRecordDto = new ClubeRecordDto("Clube1", "GO", LocalDate.now(), false);
-
         ClubeModel clube = new ClubeModel();
         clube.setId(clubeId);
+        PartidaModel partida = new PartidaModel();
+        partida.setDataHoraPartida(LocalDateTime.now().plusDays(1));
 
+        //atualiza o clube
         when(clubeRepository.findById(clubeId)).thenReturn(Optional.of(clube));
         when(clubeRepository.existsByClubeNomeIgnoreCaseAndEstadoAndIdNot(
                 anyString(), anyString(), eq(clubeId))).thenReturn(Boolean.FALSE);
 
-        doNothing().when(clubeValidator).validarDataCriacao(eq(clubeRecordDto.clubeNome()), eq(clubeRecordDto.dataCriacao()));
+        //busca a primeira partida
+        when(partidaRepository.findById(clubeId)).thenReturn(Optional.of(partida));
+        doNothing().when(clubeValidator).validate(eq(clube), eq(partida));
 
         when(clubeRepository.save(clube)).thenReturn(clube);
 
@@ -296,14 +305,19 @@ public class ClubeServiceUnitTest {
                 "Clube 1", "GO", LocalDate.now(), true);
 
         ClubeModel clubeExistente = new ClubeModel();
+        PartidaModel partida = new PartidaModel();
+        partida.setDataHoraPartida(LocalDateTime.now().minusDays(1));
+
         when(clubeRepository.findById(eq(clubeId))).thenReturn(Optional.of(clubeExistente));
         when(clubeRepository.existsByClubeNomeIgnoreCaseAndEstadoAndIdNot(
                 anyString(), anyString(), eq(clubeId))).thenReturn(Boolean.FALSE);
 
+        when(partidaRepository.findById(eq(clubeId))).thenReturn(Optional.of(partida));
+
         doThrow(new EntityConflictException("Data de criação inválida para este clube"))
-                .when(clubeValidator).validarDataCriacao(
-                        eq(clubeRecordDto.clubeNome()),
-                        eq(clubeRecordDto.dataCriacao())
+                .when(clubeValidator).validate(
+                        eq(clubeExistente),
+                        eq(partida)
                 );
 
         EntityConflictException exception = assertThrows(

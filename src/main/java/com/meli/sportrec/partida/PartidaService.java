@@ -44,6 +44,12 @@ public class PartidaService {
                 clubeVisitante.get(),
                 partidaTemporaria);
 
+        partidaValidator.validarConflitosHorarios(
+                partidaRecordDto.clubeMandanteId(),
+                partidaRecordDto.clubeVisitanteId(),
+                partidaRecordDto.dataHoraPartida(),
+                null
+        );
 
         var partidaModel = new PartidaModel();
         BeanUtils.copyProperties(partidaRecordDto, partidaModel);
@@ -85,14 +91,20 @@ public class PartidaService {
                 partidaRecordDto.clubeMandanteId(),
                 partidaRecordDto.clubeVisitanteId(),
                 partidaRecordDto.dataHoraPartida(),
-                partidaRecordDto.estadioId(),
-                null
+                partidaRecordDto.estadioId()
         );
-
 
         var partidaModel = partida.get();
         return partidaRepository.save(partidaModel);
+    }
 
+    @Transactional
+    public void removerPartida(Long id) {
+        Optional<PartidaModel> partida = partidaRepository.findById(id);
+        if (partida.isEmpty()) {
+            throw new EntityNotFoundException("Partida não encontrada");
+        }
+        partidaRepository.delete(partida.get());
     }
 }
 

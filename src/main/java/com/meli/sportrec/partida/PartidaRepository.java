@@ -4,6 +4,7 @@ import com.meli.sportrec.clube.ClubeModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PartidaRepository extends JpaRepository<PartidaModel, Long> {
+public interface PartidaRepository extends JpaRepository<PartidaModel, Long>, JpaSpecificationExecutor<PartidaModel> {
 
     @Query(""" 
         SELECT partida FROM PartidaModel partida
@@ -39,21 +40,17 @@ public interface PartidaRepository extends JpaRepository<PartidaModel, Long> {
         SELECT partida FROM PartidaModel partida 
         WHERE partida.estadio.id = :estadioId 
         AND DATE(partida.dataHoraPartida) = DATE(:dataHoraPartida)
-        AND (:excluirPartidaId IS NULL OR partida.id != :excluirPartidaId)
         """)
     List<PartidaModel> findConflitosEstadio(@Param("estadioId") Long estadioId,
-                                            @Param("dataHoraPartida") LocalDateTime dataHoraPartida,
-                                            @Param("excluirPartidaId") Long excluirPartidaId);
+                                            @Param("dataHoraPartida") LocalDateTime dataHoraPartida);
     @Query("""
         SELECT partida FROM PartidaModel partida 
         WHERE (partida.clubeMandante.id = :clubeId OR partida.clubeVisitante.id = :clubeId) 
         AND partida.dataHoraPartida BETWEEN :inicio AND :fim
-        AND (:excluirPartidaId IS NULL OR partida.id != :excluirPartidaId)
         """)
     List<PartidaModel> findConflitoHorarioClube(@Param("clubeId") Long clubeId,
                                                  @Param("inicio") LocalDateTime inicio,
-                                                 @Param("fim") LocalDateTime fim,
-                                                 @Param("excluirPartidaId") Long excluirPartidaId);
+                                                 @Param("fim") LocalDateTime fim);
 
     @Query("""
         SELECT partida FROM PartidaModel partida 

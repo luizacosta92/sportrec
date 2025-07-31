@@ -40,4 +40,10 @@ public class PartidaController {
         return ResponseEntity.status(HttpStatus.OK).body(updatePartida);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deletePartida(@PathVariable(value = "id") Long id) {
+        partidaService.removerPartida(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Partida removida com sucesso");
+    }
+
 }
