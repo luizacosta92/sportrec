@@ -10,10 +10,14 @@ public class RetrospectoAdversarioDto {
     private Integer golsSofridos;
     private Integer pontos;
 
-    public RetrospectoAdversarioDto() {}
-
+    public RetrospectoAdversarioDto(){
+        inicializarValores();
+    }
     public RetrospectoAdversarioDto(String adversarioNome) {
+        inicializarValores();
         this.adversarioNome = adversarioNome;
+    }
+    private void inicializarValores() {
         this.totalJogos = 0;
         this.vitorias = 0;
         this.empates = 0;
@@ -44,7 +48,8 @@ public class RetrospectoAdversarioDto {
     }
 
     public void setVitorias(Integer vitorias) {
-        this.vitorias = vitorias;
+        this.vitorias = vitorias != null ? vitorias : 0;
+        calcularPontos();
     }
 
     public Integer getEmpates() {
@@ -52,7 +57,8 @@ public class RetrospectoAdversarioDto {
     }
 
     public void setEmpates(Integer empates) {
-        this.empates = empates;
+        this.empates = empates != null ? empates : 0;
+        calcularPontos();
     }
 
     public Integer getDerrotas() {
@@ -60,7 +66,7 @@ public class RetrospectoAdversarioDto {
     }
 
     public void setDerrotas(Integer derrotas) {
-        this.derrotas = derrotas;
+        this.derrotas = derrotas != null ? derrotas : 0;
     }
 
     public Integer getGolsFeitos() {
@@ -85,6 +91,12 @@ public class RetrospectoAdversarioDto {
 
     public void setPontos(Integer pontos) {
         this.pontos = pontos;
+    }
+
+    private void calcularPontos() {
+        int vitoriasValue = this.vitorias != null ? this.vitorias : 0;
+        int empatesValue = this.empates != null ? this.empates : 0;
+        this.pontos = (vitoriasValue * 3) + (empatesValue * 1);
     }
 }
 

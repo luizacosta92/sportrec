@@ -1,11 +1,13 @@
 package com.meli.sportrec.retrospecto;
 
 import com.meli.sportrec.partida.PartidaModel;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Component
 public class Utils {
     public void calculoGeral (RetrospectoGeralDto retrospecto,
                               List<PartidaModel> partidas, Long clubeId) {
@@ -24,7 +26,7 @@ public class Utils {
 
                 if (partida.getGolsMandante() > partida.getGolsVisitante()){
                     vitorias++;
-                } else if (partida.getGolsVisitante().equals(partida.getGolsVisitante())) {
+                } else if (partida.getGolsMandante().equals(partida.getGolsVisitante())) {
                     empates++;
                 } else  {
                     derrotas++;
@@ -109,7 +111,11 @@ public class Utils {
         retrospectoConfronto.setGolsSofridos(retrospectoConfronto.getGolsSofridos() + golsSofridos);
 
         if (golsFeitos > golsSofridos) {
-
+            retrospectoConfronto.setVitorias(retrospectoConfronto.getVitorias() + 1);
+        } else if (golsFeitos.equals(golsSofridos)) {
+            retrospectoConfronto.setEmpates(retrospectoConfronto.getEmpates() + 1);
+        } else {
+            retrospectoConfronto.setDerrotas(retrospectoConfronto.getDerrotas() + 1);
         }
     }
 
@@ -117,12 +123,18 @@ public class Utils {
                                                     List<PartidaModel> partidas,
                                                     Long clube1Id, Long clube2Id) {
         RetrospectoConfrontoDto retrospectoClube1 = confrontoDireto.getRetrospectoClube1();
+        RetrospectoConfrontoDto retrospectoClube2 = confrontoDireto.getRetrospectoClube2();
+
 
         for (PartidaModel partida: partidas) {
             boolean clube1Mandante = partida.getClubeMandante().getId().equals(clube1Id);
             if(clube1Mandante) {
                 atualizarRetrospecto(retrospectoClube1, partida.getGolsMandante(), partida.getGolsVisitante());
-                atualizarRetrospecto()
+                atualizarRetrospecto(retrospectoClube2, partida.getGolsVisitante(), partida.getGolsMandante());
+            } else {
+                atualizarRetrospecto(retrospectoClube2, partida.getGolsVisitante(), partida.getGolsMandante());
+                atualizarRetrospecto(retrospectoClube1, partida.getGolsMandante(), partida.getGolsVisitante());
+
             }
         }
     }

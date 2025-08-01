@@ -24,7 +24,7 @@ public class PartidaModel implements Serializable {
     private ClubeModel clubeMandante;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "clube_vistante_id", referencedColumnName = "id", nullable = false,
+    @JoinColumn(name = "clube_visitante_id", referencedColumnName = "id", nullable = false,
             foreignKey = @ForeignKey(name = "FK_PARTIDA_CLUBE_VISITANTE"))
     private ClubeModel clubeVisitante;
 

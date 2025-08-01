@@ -11,9 +11,16 @@ public class RetrospectoGeralDto {
     private Integer pontos;
     private Integer saldoGols;
 
-    public RetrospectoGeralDto() {}
+    public RetrospectoGeralDto() {
+        inicializarValores();
+    }
+
     public RetrospectoGeralDto(String clubeNome) {
+        inicializarValores();
         this.clubeNome = clubeNome;
+    }
+
+    private void inicializarValores() {
         this.totalJogos = 0;
         this.vitorias = 0;
         this.empates = 0;
@@ -45,7 +52,7 @@ public class RetrospectoGeralDto {
     }
 
     public void setVitorias(Integer vitorias) {
-        this.vitorias = vitorias;
+        this.vitorias = vitorias != null ? vitorias : 0;
         calcularPontos();
     }
 
@@ -54,7 +61,7 @@ public class RetrospectoGeralDto {
     }
 
     public void setEmpates(Integer empates) {
-        this.empates = empates;
+        this.empates = empates != null ? empates : 0;
         calcularPontos();
     }
 
@@ -102,10 +109,15 @@ public class RetrospectoGeralDto {
     }
 
     private void calcularPontos(){
-        this.pontos = (this.vitorias * 3) +(this.empates *1);
+        int vitoriasValue = this.vitorias != null ? this.vitorias : 0;
+        int empatesValue = this.empates != null ? this.empates : 0;
+        this.pontos = (vitoriasValue * 3) + (empatesValue * 1);
+
     }
 
     private void calcularSaldoGols() {
-        this.saldoGols = this.saldoGols - this.golsSofridos;
+        int golsFeitosValue = this.golsFeitos != null ? this.golsFeitos : 0;
+        int golsSofridosValue = this.golsSofridos != null ? this.golsSofridos : 0;
+        this.saldoGols = golsFeitosValue - golsSofridosValue;
     }
 }
