@@ -4,24 +4,33 @@ public class RankingDto {
     private String clubeNome;
     private Integer posicao;
     private Integer pontos;
-    private Integer totalGols;
+    private Integer totalJogos;
     private Integer vitorias;
     private Integer empates;
     private Integer derrotas;
+    private Integer golsFeitos;
     private Integer golsSofridos;
     private Integer saldoGols;
 
-    public RankingDto() {}
+    public RankingDto() {
+        inicializarValores();
+    }
     public RankingDto(String clubeNome) {
+        inicializarValores();
         this.clubeNome = clubeNome;
+    }
+    private void inicializarValores() {
         this.pontos = 0;
-        this.saldoGols = 0;
+        this.golsFeitos = 0;
         this.vitorias = 0;
+        this.totalJogos = 0;
         this.empates = 0;
         this.derrotas = 0;
         this.golsSofridos = 0;
-        this.totalGols = 0;
+        this.saldoGols = 0;
     }
+
+
 
     public String getClubeNome() {
         return clubeNome;
@@ -47,20 +56,22 @@ public class RankingDto {
         this.pontos = pontos;
     }
 
-    public Integer getTotalGols() {
-        return totalGols;
+    public Integer getGolsFeitos() {
+        return golsFeitos;
     }
 
-    public void setTotalGols(Integer totalGols) {
-        this.totalGols = totalGols;
+    public void setGolsFeitos(Integer golsFeitos) {
+        this.golsFeitos = golsFeitos != null ? golsFeitos : 0;
+        calcularSaldoGols();
     }
 
     public Integer getVitorias() {
         return vitorias;
+
     }
 
     public void setVitorias(Integer vitorias) {
-        this.vitorias = vitorias;
+        this.vitorias = vitorias != null ? vitorias : 0;
     }
 
     public Integer getEmpates() {
@@ -68,7 +79,7 @@ public class RankingDto {
     }
 
     public void setEmpates(Integer empates) {
-        this.empates = empates;
+        this.empates = empates != null ? empates : 0;
     }
 
     public Integer getDerrotas() {
@@ -76,7 +87,15 @@ public class RankingDto {
     }
 
     public void setDerrotas(Integer derrotas) {
-        this.derrotas = derrotas;
+        this.derrotas = derrotas != null ? derrotas : 0;
+    }
+
+    public Integer getTotalJogos() {
+        return totalJogos;
+    }
+
+    public void setTotalJogos(Integer totalJogos) {
+        this.totalJogos = totalJogos != null ? totalJogos : 0;;
     }
 
     public Integer getGolsSofridos() {
@@ -84,14 +103,24 @@ public class RankingDto {
     }
 
     public void setGolsSofridos(Integer golsSofridos) {
-        this.golsSofridos = golsSofridos;
+        this.golsSofridos = golsSofridos  != null ? golsSofridos : 0;
+        calcularSaldoGols();
     }
 
     public Integer getSaldoGols() {
         return saldoGols;
     }
 
-    public void setSaldoGols(Integer saldoGols) {
-        this.saldoGols = saldoGols;
+    public void calcularSaldoGols() {
+        int golsFeitosValue = this.golsFeitos != null ? this.golsFeitos : 0;
+        int golsSofridosValue = this.golsSofridos != null ? this.golsSofridos : 0;
+        this.saldoGols = golsFeitosValue - golsSofridosValue;
     }
+
+    public void calcularPontos(){
+        int vitoriasValue = this.vitorias != null ? this.vitorias : 0;
+        int empatesValue = this.empates != null ? this.empates : 0;
+        this.pontos = (vitoriasValue * 3) + (empatesValue * 1);
+    }
+
 }
