@@ -2,7 +2,7 @@
 
 ## 📖 Sobre o Projeto
 
-**SportRec** é uma API REST robusta para gestão de dados esportivos, projetada para oferecer funcionalidades completas de retrospecto e ranking de clubes. O nome "SportRec" deriva de **Sport Records**, refletindo seu propósito de registrar e analisar estatísticas esportivas de forma abrangente.
+**SportRec** é uma API REST robusta para gestão de partidas de futubol, projetada para oferecer funcionalidades de retrospecto e ranking de clubes. O nome "SportRec" deriva de **Sport Record**, refletindo seu propósito de registrar e analisar estatísticas esportivas de forma abrangente.
 
 ### 🎯 Visão do Produto
 
